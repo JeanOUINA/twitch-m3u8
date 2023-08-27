@@ -58,7 +58,11 @@ function getAccessToken(id, isVod) {
 }
 
 function formatPlaylistUrl(id, accessToken, vod) {
-	return `https://usher.ttvnw.net/${vod ? 'vod' : 'api/channel/hls'}/${id}.m3u8?client_id=${clientId}&token=${accessToken.value}&sig=${accessToken.signature}&allow_source=true&allow_audio_only=true`
+	return `https://usher.ttvnw.net/${
+		vod ? 'vod' : 'api/channel/hls'
+	}/${id}.m3u8?client_id=${clientId}&token=${accessToken.value}player_backend=mediaplayer&playlist_include_framerate=true&reassignments_supported=true&sig=${
+		accessToken.signature
+	}&allow_source=true&allow_audio_only=true&transcode_mode=cbr_v1&cdm=wv&player_version=1.21.0&acmb=e30%3D&fast_bread=true&supported_codecs=avc1`
 }
 
 function getPlaylist(id, accessToken, vod) {
