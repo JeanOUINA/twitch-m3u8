@@ -1,4 +1,4 @@
-# twitch-m3u8
+# twitch-m3u8-jeanouina
 > Get the stream URL of a Twitch livestream or past broadcast (VOD)
 
 ## Features
@@ -10,7 +10,7 @@
 ## Installation
 [Node.js](https://nodejs.org/en/) required
 ```bash
-npm install twitch-m3u8
+npm install twitch-m3u8-jeanouina
 ```
 
 ## Usage
@@ -20,7 +20,7 @@ Functions getStream and getVod have an optional second boolean parameter which d
 true - function returns raw .m3u8 data  
 false - function returns an array of JSON objects containing the quality, resolution and URL of the stream  
 ```js
-const twitch = require("twitch-m3u8");
+const twitch = require("twitch-m3u8-jeanouina");
 
 // returns a JSON object containing available streams of a livestream
 twitch.getStream("chess")
@@ -63,7 +63,7 @@ Example output:
 All reverse engineering of the GraphQL API was taken from the [streamlink](https://github.com/streamlink/streamlink) project. I just rewrote it for Node.js.
 
 ## Contribute
-Did you find a bug? Do you have an idea or a feature request? [Open an issue!](https://github.com/dudik/twitch-m3u8/issues)
+Did you find a bug? Do you have an idea or a feature request? [Open an issue!](https://github.com/jeanouina/twitch-m3u8/issues)
 
 ## License
-[MIT](https://github.com/dudik/twitch-m3u8/blob/master/LICENSE) © Samuel Dudik
+[MIT](https://github.com/jeanouina/twitch-m3u8/blob/master/LICENSE) © Samuel Dudik
