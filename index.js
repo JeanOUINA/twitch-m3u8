@@ -118,7 +118,7 @@ function getVod(vid, raw) {
 }
 
 function getPlaylistUrl(id, vod) {
-	return getAccessToken(channel, false)
+	return getAccessToken(id, false)
 		.then((accessToken) => formatPlaylistUrl(id, accessToken, vod))
 		.catch(error => reject(error));
 }
