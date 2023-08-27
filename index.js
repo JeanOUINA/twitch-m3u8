@@ -57,9 +57,13 @@ function getAccessToken(id, isVod) {
 	});
 }
 
+function formatPlaylistUrl(id, accessToken, vod) {
+	return `https://usher.ttvnw.net/${vod ? 'vod' : 'api/channel/hls'}/${id}.m3u8?client_id=${clientId}&token=${accessToken.value}&sig=${accessToken.signature}&allow_source=true&allow_audio_only=true`
+}
+
 function getPlaylist(id, accessToken, vod) {
 	return new Promise((resolve, reject) => {
-		const req = https.get(`https://usher.ttvnw.net/${vod ? 'vod' : 'api/channel/hls'}/${id}.m3u8?client_id=${clientId}&token=${accessToken.value}&sig=${accessToken.signature}&allow_source=true&allow_audio_only=true`, (response) => {
+		const req = https.get(formatPlaylistUrl(id, accessToken, vod), (response) => {
 			let data = {};
 			data.statusCode = response.statusCode;
 			data.body = [];
@@ -100,24 +104,27 @@ function parsePlaylist(playlist) {
 }
 
 function getStream(channel, raw) {
-	return new Promise((resolve, reject) => {
-		getAccessToken(channel, false)
-			.then((accessToken) => getPlaylist(channel, accessToken, false))
-			.then((playlist) => resolve((raw ? playlist : parsePlaylist(playlist))))
-			.catch(error => reject(error));
-	});
+	return getAccessToken(channel, false)
+		.then((accessToken) => getPlaylist(channel, accessToken, false))
+		.then((playlist) => raw ? playlist : parsePlaylist(playlist))
+		.catch(error => reject(error));
 }
 
 function getVod(vid, raw) {
-	return new Promise((resolve, reject) => {
-		getAccessToken(vid, true)
-			.then((accessToken) => getPlaylist(vid, accessToken, true))
-			.then((playlist) => resolve((raw ? playlist : parsePlaylist(playlist))))
-			.catch(error => reject(error));
-	});
+	return getAccessToken(vid, true)
+		.then((accessToken) => getPlaylist(vid, accessToken, true))
+		.then((playlist) => raw ? playlist : parsePlaylist(playlist))
+		.catch(error => reject(error));
+}
+
+function getPlaylistUrl(id, vod) {
+	return getAccessToken(channel, false)
+		.then((accessToken) => formatPlaylistUrl(id, accessToken, vod))
+		.catch(error => reject(error));
 }
 
 module.exports = {
+	getPlaylistUrl: getPlaylistUrl,
 	getStream: getStream,
 	getVod: getVod
 };
