@@ -1,22 +1,18 @@
+const { randomBytes } = require('crypto');
 const https = require('https');
 
 const clientId = "kimne78kx3ncx6brgo4mv6wki5h1ko";
 
 function getAccessToken(id, isVod) {
 	const data = JSON.stringify({
-		operationName: "PlaybackAccessToken",
-		extensions: {
-			persistedQuery: {
-				version: 1,
-				sha256Hash: "0828119ded1c13477966434e15800ff57ddacf13ba1911c129dc2200705b0712"
-			}
-		},
+		operationName: "PlaybackAccessToken_Template",
+		query: 'query PlaybackAccessToken_Template($login: String!, $isLive: Boolean!, $vodID: ID!, $isVod: Boolean!, $playerType: String!) {  streamPlaybackAccessToken(channelName: $login, params: {platform: "web", playerBackend: "mediaplayer", playerType: $playerType}) @include(if: $isLive) {    value    signature    __typename  }  videoPlaybackAccessToken(id: $vodID, params: {platform: "web", playerBackend: "mediaplayer", playerType: $playerType}) @include(if: $isVod) {    value    signature    __typename  }}',
 		variables: {
 			isLive: !isVod,
 			login: (isVod ? "" : id),
 			isVod: isVod,
 			vodID: (isVod ? id : ""),
-			playerType: "embed"
+			playerType: "site"
 		}
 	});
 
@@ -60,9 +56,13 @@ function getAccessToken(id, isVod) {
 function formatPlaylistUrl(id, accessToken, vod) {
 	return `https://usher.ttvnw.net/${
 		vod ? 'vod' : 'api/channel/hls'
-	}/${id}.m3u8?client_id=${clientId}&token=${accessToken.value}&player_backend=mediaplayer&playlist_include_framerate=true&reassignments_supported=true&sig=${
+	}/${id}.m3u8?token=${encodeURIComponent(
+		accessToken.value
+	)}&player_backend=mediaplayer&playlist_include_framerate=true&reassignments_supported=true&sig=${
 		accessToken.signature
-	}&allow_source=true&allow_audio_only=true&transcode_mode=cbr_v1&cdm=wv&player_version=1.21.0&acmb=e30%3D&fast_bread=true&supported_codecs=avc1`
+	}&allow_source=true&allow_audio_only=true&player_version=1.21.0&fast_bread=true&play_session_id=${
+		randomBytes(16).toString('hex')
+	}`
 }
 
 function getPlaylist(id, accessToken, vod) {
